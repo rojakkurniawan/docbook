@@ -20,9 +20,9 @@ func InitializeApp() *gin.Engine {
 
 	db := config.ConnectDatabase()
 
-	db.AutoMigrate(&entity.User{}, &entity.Specialization{}, &entity.Doctor{}, &entity.DoctorSchedule{}, &entity.Booking{})
+	db.AutoMigrate(&entity.User{}, &entity.Specialization{}, &entity.Doctor{}, &entity.DoctorSchedule{}, &entity.Booking{}, &entity.BookingPatient{}, &entity.TimeSlot{}, &entity.Hospital{}, &entity.MedicalHistory{})
 
-	routes.SetupRoutes(r, db)
+	SetupRoutes(r, db)
 
 	return r
 }
