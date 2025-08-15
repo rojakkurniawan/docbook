@@ -2,7 +2,6 @@ package main
 
 import (
 	"docbook/config"
-	"docbook/entity"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -13,14 +12,14 @@ func InitializeApp() *gin.Engine {
 	err := godotenv.Load()
 
 	if err != nil {
-		log.Fatal("Error loading ENV")
+		log.Fatalf("Error loading .env file: %v", err)
 	}
 
 	r := gin.Default()
 
-	db := config.ConnectDatabase()
-
-	db.AutoMigrate(&entity.User{}, &entity.Specialization{}, &entity.Doctor{}, &entity.DoctorSchedule{}, &entity.Booking{}, &entity.BookingPatient{}, &entity.TimeSlot{}, &entity.Hospital{}, &entity.MedicalHistory{})
+	conf := config.GetConfig()
+	db := config.InitDatabaseMySQL(&conf)
+	config.AutoMigrate(db)
 
 	SetupRoutes(r, db)
 

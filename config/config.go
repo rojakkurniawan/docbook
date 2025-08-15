@@ -1,33 +1,55 @@
 package config
 
 import (
-	"docbook/consts"
+	"docbook/entity"
 	"fmt"
 	"log"
 	"os"
 
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-func ConnectDatabase() *gorm.DB {
-	dbHost := os.Getenv(consts.DBHostEnv)
-	dbPort := os.Getenv(consts.DBPortEnv)
-	dbUser := os.Getenv(consts.DBUserEnv)
-	dbPass := os.Getenv(consts.DBPasswordEnv)
-	dbName := os.Getenv(consts.DBNameEnv)
+const (
+	dbHost     = "DB_HOST"
+	dbPort     = "DB_PORT"
+	dbUser     = "DB_USER"
+	dbPassword = "DB_PASSWORD"
+	dbName     = "DB_NAME"
+)
 
-	if dbHost == "" || dbPort == "" || dbUser == "" || dbName == "" {
-		log.Fatal("Missing required database environment variables")
+type Config struct {
+	Port        string
+	DatabaseURL string
+}
+
+func GetConfig() Config {
+	return Config{
+		Port: os.Getenv(dbPort),
+		DatabaseURL: fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+			os.Getenv(dbUser),
+			os.Getenv(dbPassword),
+			os.Getenv(dbHost),
+			os.Getenv(dbPort),
+			os.Getenv(dbName),
+		),
 	}
+}
 
-	dsn := fmt.Sprintf(consts.MySQLDSNFormat, dbUser, dbPass, dbHost, dbPort, dbName)
+func AutoMigrate(db *gorm.DB) {
+	err := db.AutoMigrate(
+		&entity.User{},
+		&entity.Specialization{},
+		&entity.Doctor{},
+		&entity.DoctorSchedule{},
+		&entity.Booking{},
+		&entity.BookingPatient{},
+		&entity.TimeSlot{},
+		&entity.MedicalHistory{},
+	)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("%s: %v", consts.ErrDatabaseConnectionError, err)
+		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
-	log.Println("Successfully connected to database")
-	return db
+	log.Println("Successfully migrated database")
 }
