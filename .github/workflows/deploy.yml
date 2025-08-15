@@ -21,7 +21,15 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd /home/student/docbook
+
+            # Pull latest changes
             git pull origin main
-            docker build -t docbook-app .
-            docker rm -f docbook || true
-            docker run -d -p 8080:8080 --env-file /home/student/docbook/.env --name docbook docbook-app
+
+            # Stop existing containers
+            docker-compose down || true
+
+            # Build and start services
+            docker-compose up -d --build
+
+            # Wait for MySQL to be ready
+            sleep 30
