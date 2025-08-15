@@ -2,18 +2,17 @@ package main
 
 import (
 	"docbook/config"
-	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
 func InitializeApp() *gin.Engine {
-	err := godotenv.Load()
+	godotenv.Load()
 
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
+	// if err != nil {
+	// 	log.Fatalf("Error loading .env file: %v", err)
+	// }
 
 	r := gin.Default()
 
