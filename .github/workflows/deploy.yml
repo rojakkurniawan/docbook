@@ -26,10 +26,10 @@ jobs:
             git pull origin main
 
             # Stop existing containers
-            docker-compose down || true
+            docker compose down || true
 
             # Build and start services
-            docker-compose up -d --build
+            docker compose up -d --build
 
             # Wait for MySQL to be ready
             sleep 30
