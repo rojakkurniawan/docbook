@@ -4,8 +4,7 @@ services:
     container_name: docbook-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_HOST: "%"
     volumes:
       - mysql_data:/var/lib/mysql
@@ -27,6 +26,7 @@ services:
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_USER=root
+      - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - REFRESH_JWT_SECRET_KEY=${REFRESH_JWT_SECRET_KEY}
